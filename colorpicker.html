@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, width=device-width">
+<meta name="mobile-web-app-capable" content="yes">
+<canvas id="canv"></canvas>
+<script type="text/javascript">;
+var canvas = document.getElementById("canv");
+var w=800,h=800;
+canvas.width=w; canvas.height=h;
+var ctx = canvas.getContext("2d");
+with(ctx){
+	var px=w/5.5;
+	function ca(x,offset){
+		var a=0,fx=x+offset,cp=0;
+		cp=1;if (fx>px*cp) a=Math.min(1,(fx-px*cp)/px);
+		cp=4;if (fx>px*cp) a=Math.max(0,1-(fx-px*cp)/px);
+		cp=7;if (fx>px*cp) a=Math.min(1,(fx-px*cp)/px);
+		return a;
+	}
+	var wh,bl,ps=5; // color size
+	for(var x=0;x<w;x+=ps){
+		var a=ca(x,px*3);
+		var ax=a*-100+150;
+		var r=a*255;
+		
+		var a=ca(x,px);
+		var ax=a*-100+150;
+		var g=a*255;
+
+		var a=ca(x,-px);
+		var ax=a*-100+150;
+		var b=a*255;
+		
+		for(var y=0;y<h;y+=ps){
+			var cr=r,cg=g,cb=b;
+			if (y<h/2){ wh=Math.max(0,1-(y/(h/2)));
+			cr=wh*255+(1-wh)*r;
+			cg=wh*255+(1-wh)*g;
+			cb=wh*255+(1-wh)*b;
+			}
+			if (y>h/2){ bl=Math.min(1,((y-h/2)/(h/2)));
+			cr=bl*bl+(1-bl)*r;
+			cg=bl*bl+(1-bl)*g;
+			cb=bl*bl+(1-bl)*b;
+			}
+
+			fillStyle="rgb("+cr+","+cg+","+cb+")";		
+			fillRect(x,y,ps,ps);
+		}
+	}
+}
+
+document.getElementById("canv").addEventListener("click",function(e){
+	var p = ctx.getImageData(e.offsetX,e.offsetY, 1, 1).data; 
+   var rgb = "rgb(" + p[0]+","+ p[1]+","+ p[2]+")";
+   var hex = "#" + ("00"+p[0].toString(16)).slice(-2)+ ("00"+p[1].toString(16)).slice(-2)+ ("00"+p[2].toString(16)).slice(-2);
+   document.getElementById("c").style.backgroundColor=rgb;
+   document.getElementById("t").innerHTML=rgb+"<br>"+hex;
+});
+</script>
+<div id=c style="width:30px;height:30px;"></div>
+<div id=t style=""></div>
+<style>
+#canv{
+	box-shadow: 2px 2px 5px #000;
+}
+</style>
